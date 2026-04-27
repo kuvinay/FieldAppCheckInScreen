@@ -1,0 +1,2119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FieldPulse — Sales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --ink: #0D0F14;
+            --ink-soft: #1C1F28;
+            --ink-muted: #2A2D38;
+            --surface: #F7F6F3;
+            --surface-raised: #FFFFFF;
+            --surface-dim: #EFEFEB;
+            --amber: #F5A623;
+            --amber-soft: #FEF3DC;
+            --amber-deep: #C07C0A;
+            --sage: #4A7C59;
+            --sage-soft: #E6F2EA;
+            --rose: #D9566A;
+            --rose-soft: #FCEAED;
+            --sky: #3A6EA8;
+            --sky-soft: #E8F0FA;
+            --text-primary: #0D0F14;
+            --text-secondary: #5A5E6B;
+            --text-tertiary: #9499A8;
+            --border: rgba(13,15,20,0.09);
+            --border-med: rgba(13,15,20,0.14);
+            --radius-sm: 10px;
+            --radius: 16px;
+            --radius-lg: 22px;
+            --radius-xl: 28px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            background: #E8E5DF;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .font-mono { font-family: 'DM Mono', monospace; }
+
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* App shell gradient */
+        .app-shell {
+            background: linear-gradient(160deg, #1C2035 0%, #0D0F14 60%, #141820 100%);
+        }
+
+        /* Card styles */
+        .card {
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+        }
+
+        .card-sm {
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+
+        /* Tag styles */
+        .tag {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        /* Checkbox custom */
+        .fp-check {
+            width: 20px; height: 20px;
+            border-radius: 6px;
+            border: 1.5px solid var(--border-med);
+            background: var(--surface-dim);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.15s;
+            cursor: pointer;
+        }
+        .fp-check.active {
+            background: var(--ink);
+            border-color: var(--ink);
+        }
+
+        /* Pill toggle */
+        .pill-tab {
+            padding: 8px 18px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .pill-tab.active {
+            background: var(--ink);
+            color: #fff;
+        }
+        .pill-tab.inactive {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+        .pill-tab.inactive:hover {
+            background: var(--surface-dim);
+            color: var(--text-primary);
+        }
+
+        /* Input style */
+        .fp-input {
+            width: 100%;
+            background: var(--surface-dim);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .fp-input:focus {
+            border-color: var(--amber);
+            background: #fff;
+        }
+        .fp-input::placeholder { color: var(--text-tertiary); }
+
+        /* Select style */
+        select.fp-input { cursor: pointer; }
+
+        /* Textarea */
+        textarea.fp-input { resize: none; line-height: 1.6; }
+
+        /* Primary button */
+        .btn-primary {
+            background: var(--ink);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            padding: 14px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-primary:hover { background: #1C1F28; }
+        .btn-primary:active { transform: scale(0.97); }
+
+        /* Secondary button */
+        .btn-secondary {
+            background: var(--surface-dim);
+            color: var(--text-primary);
+            border: 1px solid var(--border-med);
+            border-radius: var(--radius);
+            padding: 13px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-secondary:hover { background: #E2E0DC; }
+        .btn-secondary:active { transform: scale(0.97); }
+
+        /* Progress steps */
+        .step-dot {
+            height: 3px;
+            border-radius: 3px;
+            flex: 1;
+            transition: all 0.3s;
+        }
+
+        /* Amber accent lines */
+        .amber-accent {
+            position: relative;
+        }
+        .amber-accent::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 50%;
+            transform: translateY(-50%);
+            width: 3px; height: 60%;
+            background: var(--amber);
+            border-radius: 2px;
+        }
+
+        /* Hover card lift */
+        .card-lift {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .card-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(13,15,20,0.1);
+        }
+        .card-lift:active { transform: scale(0.98); }
+
+        /* Scrollable content */
+        .scroll-area {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Section label */
+        .section-lbl {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            margin-bottom: 12px;
+        }
+
+        /* Bottom sheet */
+        .bottom-sheet {
+            background: var(--surface-raised);
+            border-radius: 28px 28px 0 0;
+            position: relative;
+        }
+
+        /* Toast */
+        .toast {
+            position: absolute;
+            bottom: 88px;
+            left: 50%;
+            transform: translateX(-50%) translateY(8px);
+            background: var(--ink);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity: 0;
+            z-index: 100;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Visit type card */
+        .visit-card {
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: var(--surface-raised);
+        }
+        .visit-card:hover { background: var(--surface-dim); }
+        .visit-card.selected {
+            border-color: var(--amber);
+            background: var(--amber-soft);
+        }
+
+        /* Outcome card */
+        .outcome-card {
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: var(--surface-raised);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+        }
+        .outcome-card:hover { background: var(--surface-dim); }
+
+        /* Survey check item */
+        .survey-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 11px 0;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+        }
+        .survey-item:last-child { border-bottom: none; }
+
+        /* Photo grid slot */
+        .photo-slot {
+            border: 1.5px dashed var(--border-med);
+            border-radius: var(--radius-sm);
+            height: 72px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: var(--surface-dim);
+        }
+        .photo-slot:hover { border-color: var(--amber); background: var(--amber-soft); }
+        .photo-slot.taken {
+            border-style: solid;
+            border-color: var(--sage);
+            background: var(--sage-soft);
+        }
+
+        /* Stat pill */
+        .stat-pill {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 100px;
+            padding: 5px 14px;
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.75);
+        }
+
+        /* Activity log entry */
+        .log-entry {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 16px 18px;
+            background: var(--surface-raised);
+            margin-bottom: 12px;
+        }
+
+        /* Delivery tag chips */
+        .chip {
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1.5px solid var(--border);
+            cursor: pointer;
+            transition: all 0.15s;
+            background: var(--surface-raised);
+            color: var(--text-secondary);
+        }
+        .chip:hover { background: var(--surface-dim); }
+        .chip.selected {
+            background: var(--ink);
+            border-color: var(--ink);
+            color: #fff;
+        }
+
+        /* Radio option */
+        .radio-opt {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: var(--radius);
+            border: 1.5px solid var(--border);
+            cursor: pointer;
+            transition: all 0.15s;
+            background: var(--surface-raised);
+            margin-bottom: 8px;
+        }
+        .radio-opt:hover { background: var(--surface-dim); }
+        .radio-opt.selected {
+            border-color: var(--amber);
+            background: var(--amber-soft);
+        }
+
+        /* Contact card */
+        .contact-entry {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            background: var(--surface-raised);
+            margin-bottom: 10px;
+        }
+
+        /* Doc entry */
+        .doc-entry {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            background: var(--surface-raised);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        /* Summary row */
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .summary-row:last-child { border-bottom: none; }
+
+        /* Mic button */
+        .mic-btn {
+            width: 34px; height: 34px;
+            border-radius: 100px;
+            border: 1px solid var(--border-med);
+            background: var(--surface-raised);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            color: var(--text-tertiary);
+            transition: all 0.15s;
+        }
+        .mic-btn:hover { background: var(--surface-dim); color: var(--text-secondary); }
+        .mic-btn.recording {
+            background: #FF4444;
+            border-color: #FF4444;
+            color: #fff;
+            animation: pulse-rec 1s infinite;
+        }
+        @keyframes pulse-rec {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Hero overlay gradient */
+        .hero-overlay {
+            background: linear-gradient(to top, rgba(13,15,20,0.85) 0%, rgba(13,15,20,0.2) 60%, transparent 100%);
+        }
+
+        /* Screen fade */
+        .screen-fade {
+            animation: fadeUp 0.25s ease both;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Timer display */
+        .timer-display {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 100px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        /* Green GPS badge */
+        .gps-badge {
+            background: var(--sage-soft);
+            color: var(--sage);
+            border: 1px solid rgba(74,124,89,0.2);
+        }
+
+        /* Call button */
+        .call-btn {
+            width: 38px; height: 38px;
+            border-radius: 100px;
+            background: var(--ink);
+            color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: none;
+        }
+        .call-btn:hover { background: var(--ink-soft); }
+        .call-btn:active { transform: scale(0.93); }
+
+        /* Back button */
+        .nav-btn {
+            width: 40px; height: 40px;
+            border-radius: 100px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            color: #fff;
+            transition: all 0.15s;
+            backdrop-filter: blur(8px);
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.2); }
+
+        /* Info alert */
+        .info-alert {
+            background: var(--amber-soft);
+            border: 1px solid rgba(245,166,35,0.25);
+            border-radius: var(--radius);
+            padding: 12px 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        /* Stat block */
+        .stat-block {
+            flex: 1;
+            text-align: center;
+            padding: 0 8px;
+        }
+
+        /* Modal backdrop */
+        .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(13,15,20,0.55);
+            z-index: 50;
+            display: flex;
+            align-items: flex-end;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .modal-sheet {
+            background: var(--surface-raised);
+            border-radius: 28px 28px 0 0;
+            width: 100%;
+            max-height: 85%;
+            overflow-y: auto;
+            animation: slideUp 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .handle-bar {
+            width: 36px; height: 4px;
+            background: var(--border-med);
+            border-radius: 100px;
+            margin: 12px auto 4px;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ink: '#0D0F14',
+                        amber: '#F5A623',
+                        sage: '#4A7C59',
+                        rose: '#D9566A',
+                        sky: '#3A6EA8',
+                        surface: '#F7F6F3',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+/* ── Icons ── */
+const I = ({ n, size = 16, cls = '', style = {} }) => (
+    <i className={`fa-solid fa-${n} ${cls}`} style={{ fontSize: size, width: size, height: size, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, ...style }} />
+);
+
+/* ── Mock Data ── */
+const initialClients = [
+    { id: 1, name: 'The Rustic Spoon', dist: '0.4 mi', tag: 'URGENT', tagColor: 'rose',
+      addr: '847 Magnolia Blvd, Burbank, CA',
+      img: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=375&q=80',
+      contact: 'Jane Doe', pos: 'Square', fee: '$0.10+2.5%', bps: '35 bps',
+      type: 'Full service', delivery: ['Uber Eats'], stations: '2/0', menu: true, painPoints: ['Slow billing'],
+      lastActivity: 'Call on Apr 13, 2026 by Clark Kent for 2m 1s' },
+    { id: 2, name: 'CloudKitchens', dist: '1.5 mi', tag: 'DUE TODAY', tagColor: 'amber',
+      addr: '890 Bryant St, San Francisco',
+      img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=375&q=80',
+      contact: 'Jane Doe', pos: 'Unknown', fee: 'N/A', bps: '--',
+      type: null, delivery: [], stations: null, menu: false, painPoints: [],
+      lastActivity: null },
+    { id: 3, name: 'Green Garden', dist: '0.9 mi', tag: 'PENDING', tagColor: 'sage',
+      addr: '321 Pine St, Burbank',
+      img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=375&q=80',
+      contact: 'No Contact', pos: 'Unknown', fee: 'N/A', bps: '--',
+      type: null, delivery: [], stations: null, menu: false, painPoints: [],
+      lastActivity: 'Check-in on Apr 8, 2026 by Diana Prince for 11 mins' },
+];
+
+const initialLogs = [
+    { id: 1, type: 'VISIT', placeId: 1,
+      date: 'Apr 12, 2026', time: '10:30',
+      note: 'Standard site check-in.',
+      formData: [
+          { label: 'No. of Stations', answer: '3' },
+          { label: 'Current POS Provider', answer: 'Square' },
+      ]
+    }
+];
+
+const initialContactsMap = {
+    1: [{ id: 1, name: 'Jane Doe', phone: '+1 234 567 8900', email: 'jane.doe@example.com', role: 'Owner' }],
+    2: [{ id: 2, name: 'Clark Kent', phone: '+1 987 654 3210', email: 'clark@techhub.com', role: 'Operations Lead' }],
+};
+
+const initialDocsMap = {
+    1: [{ id: 101, name: 'Menu_Pricing_v2.pdf', date: 'Apr 5, 2026', size: '2.4 MB', type: 'pdf' }],
+};
+
+const tagStyles = {
+    rose:  { bg: 'var(--rose-soft)',  color: 'var(--rose)' },
+    amber: { bg: 'var(--amber-soft)', color: 'var(--amber-deep)' },
+    sage:  { bg: 'var(--sage-soft)',  color: 'var(--sage)' },
+};
+
+/* ── App ── */
+function App() {
+    const [screen, setScreen] = useState('directory');
+    const [activePlaceId, setActivePlaceId] = useState(null);
+    const [places, setPlaces] = useState(initialClients);
+    const [logs, setLogs] = useState(initialLogs);
+    const [contactsMap, setContactsMap] = useState(initialContactsMap);
+    const [docsMap] = useState(initialDocsMap);
+    const [detailTab, setDetailTab] = useState('actions');
+    const [toast, setToast] = useState({ msg: '', show: false });
+    const [modalType, setModalType] = useState(null);
+
+    /* wizard */
+    const [wizardStep, setWizardStep] = useState(0);
+    const [visitTime, setVisitTime] = useState(0);
+    const [timerOn, setTimerOn] = useState(false);
+    const [recordingField, setRecordingField] = useState(null);
+    const [wData, setWData] = useState(defaultWizardData());
+
+    function defaultWizardData() {
+        return {
+            visitType: 'Cold visit',
+            contactMode: 'new',
+            selectedContactId: null,
+            newContact: { name: '', role: '', phone: '' },
+            storeProfile: { types: [], delivery: [], fixed: '', handhelds: '', posPainPoints: '' },
+            survey: { posId: false, stationsNoted: false, vendorName: '', swipeFee: '', basisPoints: '',
+                      menuObtained: false, diningPhotos: false, kitchenPhoto: false, cposPhoto: false,
+                      photos: [], cardObtained: false, businessCardPhoto: null,
+                      painPoints: false, dmConfirmed: false, followUpPerm: false },
+            discovery: { painPoints: [], features: [], reaction: '', objections: [] },
+            followUp: { discussionOutcome: '', objections: [], nextAction: '' },
+            demo: { featuresShown: [], audience: '', mostLiked: '', confusions: '', technicalConcerns: '', needTrial: null, reaction: '', nextStep: '' },
+            closing: { proceedThisWeek: null, pricingApproved: null, finalConcern: '', docsReady: null, installationDate: '', dmMet: null, agreedPricing: '', contractSigned: null, kycPending: [], goLiveDate: '', reason: '', nextStep: '' },
+            outcome: '',
+            visitNote: ''
+        };
+    }
+
+    const activePlace = places.find(p => p.id === activePlaceId);
+
+    useEffect(() => {
+        let iv;
+        if (timerOn) iv = setInterval(() => setVisitTime(t => t + 1), 1000);
+        return () => clearInterval(iv);
+    }, [timerOn]);
+
+    const showToast = (msg) => {
+        setToast({ msg, show: true });
+        setTimeout(() => setToast({ msg: '', show: false }), 2800);
+    };
+
+    const fmtTime = (s) =>
+        `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
+
+    const toggleArr = (path1, path2, item) =>
+        setWData(p => {
+            const arr = p[path1][path2];
+            return { ...p, [path1]: { ...p[path1], [path2]: arr.includes(item) ? arr.filter(x => x !== item) : [...arr, item] } };
+        });
+
+    const toggleSurvey = (field) =>
+        setWData(p => ({ ...p, survey: { ...p.survey, [field]: !p.survey[field] } }));
+
+    const handleStartWizard = () => {
+        setWizardStep(0);
+        setVisitTime(0);
+        setTimerOn(true);
+        setWData(defaultWizardData());
+        setScreen('wizard');
+    };
+
+    const isColdVisit = wData.visitType === 'Cold visit';
+    const isFollowUpVisit = wData.visitType === 'Follow-up';
+    const isDemoVisit = wData.visitType === 'Demo';
+    const isClosingVisit = wData.visitType === 'Closing';
+    
+    // Cold Visit has 6 steps, others have 5
+    const maxSteps = isColdVisit ? 6 : 5;
+
+    const handleNext = () => {
+        if (wizardStep < maxSteps) {
+            setWizardStep(s => s + 1);
+        } else {
+            setTimerOn(false);
+            const now = new Date();
+            let contactName = 'No contact';
+            
+            if (wData.contactMode === 'new' && wData.newContact.name.trim()) {
+                const updated = { ...contactsMap };
+                if (!updated[activePlaceId]) updated[activePlaceId] = [];
+                updated[activePlaceId] = [...(updated[activePlaceId] || []), { id: Date.now(), name: wData.newContact.name, role: wData.newContact.role, phone: wData.newContact.phone, email: '' }];
+                setContactsMap(updated);
+                contactName = wData.newContact.name;
+            } else if (wData.contactMode === 'existing') {
+                const c = contactsMap[activePlaceId]?.find(x => x.id === wData.selectedContactId);
+                if (c) contactName = c.name;
+            }
+            
+            // Sync POS & Fee info back to the client place card
+            setPlaces(prevPlaces => prevPlaces.map(p => {
+                if (p.id === activePlaceId) {
+                    return {
+                        ...p,
+                        pos: wData.survey.vendorName || p.pos,
+                        fee: wData.survey.swipeFee || p.fee,
+                        bps: wData.survey.basisPoints || p.bps
+                    };
+                }
+                return p;
+            }));
+
+            let formData = [];
+            if (isColdVisit) {
+                formData = [
+                    { label: 'Visit Mode', answer: hasContact ? 'Contact checklist' : 'Zero contact' },
+                    { label: 'POS Observed', answer: wData.survey.vendorName || 'Unknown' },
+                    { label: 'Stations', answer: `Fixed: ${wData.storeProfile.fixed || 0}, Handhelds: ${wData.storeProfile.handhelds || 0}` },
+                    { label: 'Restaurant Types', answer: wData.storeProfile.types.join(', ') || 'N/A' },
+                    ...(wData.storeProfile.posPainPoints ? [{ label: 'Kitchen Assessment', answer: wData.storeProfile.posPainPoints }] : []),
+                    { label: 'Photos', answer: `${wData.survey.photos.length} Captured` },
+                    ...(wData.survey.businessCardPhoto ? [{ label: 'Business Card', answer: 'Captured', photo: wData.survey.businessCardPhoto }] : []),
+                    ...(wData.discovery.reaction ? [{ label: 'Lead Temp', answer: wData.discovery.reaction }] : []),
+                    ...(wData.discovery.objections.length > 0 ? [{ label: 'Objections', answer: wData.discovery.objections.join(', ') }] : []),
+                    { label: 'Outcome', answer: wData.outcome || 'None recorded' },
+                ];
+            } else if (isFollowUpVisit) {
+                formData = [
+                    { label: 'Visit Mode', answer: hasContact ? 'Contact selected' : 'Zero contact' },
+                    { label: 'Discussion', answer: wData.followUp.discussionOutcome || 'N/A' },
+                    ...(wData.followUp.objections.length > 0 ? [{ label: 'Objections', answer: wData.followUp.objections.join(', ') }] : []),
+                    { label: 'Next Action', answer: wData.followUp.nextAction || 'None' }
+                ];
+            } else if (isDemoVisit) {
+                formData = [
+                    { label: 'Visit Mode', answer: hasContact ? 'Contact selected' : 'Zero contact' },
+                    { label: 'Audience', answer: wData.demo.audience || 'Unknown' },
+                    ...(wData.demo.featuresShown.length > 0 ? [{ label: 'Features Shown', answer: wData.demo.featuresShown.join(', ') }] : []),
+                    { label: 'Reaction', answer: wData.demo.reaction || 'N/A' },
+                    { label: 'Need Trial?', answer: wData.demo.needTrial === true ? 'Yes' : wData.demo.needTrial === false ? 'No' : 'N/A' },
+                    { label: 'Next Step', answer: wData.demo.nextStep || 'None' }
+                ];
+            } else if (isClosingVisit) {
+                formData = [
+                    { label: 'Visit Mode', answer: hasContact ? 'Contact selected' : 'Zero contact' },
+                    { label: 'Agreed Pricing', answer: wData.closing.agreedPricing || 'N/A' },
+                    { label: 'Contract Signed?', answer: wData.closing.contractSigned === true ? 'Yes' : wData.closing.contractSigned === false ? 'No' : 'N/A' },
+                    ...(wData.closing.kycPending.length > 0 ? [{ label: 'Pending Docs', answer: wData.closing.kycPending.join(', ') }] : []),
+                    { label: 'Go-Live Date', answer: wData.closing.goLiveDate || wData.closing.installationDate || 'TBD' },
+                    { label: 'Next Step', answer: wData.closing.nextStep || 'None' }
+                ];
+            }
+
+            setLogs([{
+                id: Date.now(), type: 'VISIT', placeId: activePlaceId,
+                date: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                time: `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`,
+                note: wData.visitNote || `Completed ${wData.visitType}. Contact: ${contactName}`,
+                formData
+            }, ...logs]);
+            showToast('Visit synced successfully');
+            setScreen('detail');
+        }
+    };
+
+    const handlePrev = () => { if (wizardStep > 0) setWizardStep(s => s - 1); };
+
+    const YesNoToggle = ({ label, val, onChange }) => (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid var(--border)' }}>
+            <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>{label}</p>
+            <div style={{ display: 'flex', background: 'var(--surface-dim)', borderRadius: 8, padding: 3, gap: 2 }}>
+                <button onClick={() => onChange(true)} style={{ padding: '4px 12px', borderRadius: 6, fontSize: 12, fontWeight: 600, background: val === true ? '#fff' : 'transparent', color: val === true ? 'var(--sage)' : 'var(--text-secondary)', border: 'none', boxShadow: val === true ? '0 2px 4px rgba(0,0,0,0.05)' : 'none', cursor: 'pointer' }}>Yes</button>
+                <button onClick={() => onChange(false)} style={{ padding: '4px 12px', borderRadius: 6, fontSize: 12, fontWeight: 600, background: val === false ? '#fff' : 'transparent', color: val === false ? 'var(--rose)' : 'var(--text-secondary)', border: 'none', boxShadow: val === false ? '0 2px 4px rgba(0,0,0,0.05)' : 'none', cursor: 'pointer' }}>No</button>
+            </div>
+        </div>
+    );
+
+    const handleVoice = (field) => {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) { showToast('Voice not supported'); return; }
+        const r = new SR();
+        r.onstart = () => setRecordingField(field);
+        r.onresult = (e) => {
+            const t = e.results[0][0].transcript;
+            if (field === 'visitNote') setWData(p => ({ ...p, visitNote: (p.visitNote ? p.visitNote + ' ' : '') + t }));
+            if (field === 'posPainPoints') setWData(p => ({ ...p, storeProfile: { ...p.storeProfile, posPainPoints: (p.storeProfile.posPainPoints ? p.storeProfile.posPainPoints + ' ' : '') + t } }));
+        };
+        r.onend = () => setRecordingField(null);
+        r.start();
+    };
+
+    const handleAddNote = (noteText) => {
+        if (!noteText.trim()) return;
+        const now = new Date();
+        setLogs([{
+            id: Date.now(), type: 'NOTE', placeId: activePlaceId,
+            date: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            time: `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`,
+            note: noteText
+        }, ...logs]);
+        setModalType(null);
+        showToast('Note saved');
+    };
+
+    const handleAddContact = (c) => {
+        const updated = { ...contactsMap };
+        if (!updated[activePlaceId]) updated[activePlaceId] = [];
+        updated[activePlaceId] = [...updated[activePlaceId], { id: Date.now(), ...c }];
+        setContactsMap(updated);
+        setModalType(null);
+        showToast('Contact added');
+    };
+
+    const placeContacts = contactsMap[activePlaceId] || [];
+    const placeLogs = logs.filter(l => l.placeId === activePlaceId);
+    const placeDocs = docsMap[activePlaceId] || [];
+    const hasContact = wData.contactMode === 'existing' || (wData.contactMode === 'new' && wData.newContact.name.trim().length > 0);
+
+    /* ═══════════════════════════════════════ DIRECTORY ═══════════════════════════════════════ */
+    const renderDirectory = () => (
+        <div className="flex flex-col h-full screen-fade">
+            {/* Header */}
+            <div className="app-shell px-5 pt-12 pb-5">
+                <div className="flex items-center justify-between mb-5">
+                    <div>
+                        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: 4 }}>Field Sales</p>
+                        <h1 style={{ fontSize: 26, fontWeight: 700, color: '#fff', letterSpacing: '-0.5px' }}>Directory</h1>
+                    </div>
+                    <div className="flex gap-2">
+                        <button className="nav-btn"><I n="sliders" size={14} /></button>
+                        <button className="nav-btn"><I n="magnifying-glass" size={14} /></button>
+                    </div>
+                </div>
+
+                {/* Filter pills */}
+                <div className="flex gap-2 overflow-x-auto hide-scroll pb-1">
+                    {['By last activity', 'By check-in', 'By name'].map((f, i) => (
+                        <button key={f} style={{
+                            padding: '7px 16px', borderRadius: 100,
+                            fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap',
+                            background: i === 0 ? 'var(--amber)' : 'rgba(255,255,255,0.1)',
+                            color: i === 0 ? '#0D0F14' : 'rgba(255,255,255,0.7)',
+                            border: i === 0 ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                            cursor: 'pointer',
+                        }}>{f}</button>
+                    ))}
+                </div>
+            </div>
+
+            {/* List */}
+            <div style={{ background: 'var(--surface)', borderRadius: '24px 24px 0 0', flex: 1, overflowY: 'auto', padding: '20px 16px 100px' }} className="hide-scroll">
+                {places.map(p => {
+                    const ts = tagStyles[p.tagColor] || tagStyles.amber;
+                    return (
+                        <div key={p.id} className="card card-lift" style={{ padding: '14px', marginBottom: 12, cursor: 'pointer', display: 'flex', gap: 14 }}
+                            onClick={() => { setActivePlaceId(p.id); setDetailTab('actions'); setScreen('detail'); }}>
+                            <div style={{ flexShrink: 0 }}>
+                                <img src={p.img} alt={p.name} style={{ width: 72, height: 72, borderRadius: 14, objectFit: 'cover', border: '1px solid var(--border)' }} />
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
+                                    <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.2px' }}>{p.name}</p>
+                                    <span className="tag" style={{ background: ts.bg, color: ts.color, marginLeft: 8, flexShrink: 0 }}>{p.tag}</span>
+                                </div>
+                                <p style={{ fontSize: 12, color: 'var(--text-tertiary)', marginBottom: 10 }}>{p.addr} · {p.dist}</p>
+                                <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
+                                    <span style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'var(--surface-dim)', borderRadius: 8, padding: '4px 9px', fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)' }}>
+                                        <I n="user" size={10} />{p.contact}
+                                    </span>
+                                    <span style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'var(--surface-dim)', borderRadius: 8, padding: '4px 9px', fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)' }}>
+                                        <I n="desktop" size={10} />{p.pos}
+                                    </span>
+                                </div>
+                                <div style={{ borderTop: '1px solid var(--border)', paddingTop: 9 }}>
+                                    {p.lastActivity
+                                        ? <p style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{p.lastActivity}</p>
+                                        : <p style={{ fontSize: 11, color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: 5 }}><I n="clock" size={10} />No prior activity</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+
+    /* ═══════════════════════════════════════ DETAIL ═══════════════════════════════════════ */
+    const renderDetail = () => (
+        <div className="flex flex-col h-full bg-white screen-fade">
+            {/* Hero */}
+            <div style={{ height: '34%', position: 'relative', flexShrink: 0 }}>
+                <img src={activePlace.img} alt={activePlace.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <div className="hero-overlay" style={{ position: 'absolute', inset: 0 }} />
+                <div style={{ position: 'absolute', top: 46, left: 16, right: 16, display: 'flex', justifyContent: 'space-between', zIndex: 10 }}>
+                    <button className="nav-btn" onClick={() => setScreen('directory')}><I n="chevron-left" size={16} /></button>
+                    <button className="nav-btn"><I n="ellipsis-vertical" size={16} /></button>
+                </div>
+                <div style={{ position: 'absolute', bottom: 18, left: 18, right: 18, zIndex: 10 }}>
+                    <h1 style={{ fontSize: 24, fontWeight: 700, color: '#fff', letterSpacing: '-0.5px', marginBottom: 4 }}>{activePlace.name}</h1>
+                    <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)' }}>{activePlace.addr} · {activePlace.dist}</p>
+                </div>
+            </div>
+
+            {/* Content Sheet */}
+            <div style={{ flex: 1, background: 'var(--surface)', borderRadius: '24px 24px 0 0', marginTop: -22, zIndex: 10, overflowY: 'auto', padding: '20px 16px 24px' }} className="hide-scroll">
+
+                {/* POS Stats */}
+                <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 18, padding: '14px 10px', marginBottom: 18, display: 'flex' }}>
+                    {[['POS', activePlace.pos, '#'], ['Fee', activePlace.fee, '$'], ['BPS', activePlace.bps, '~']].map(([label, val, _], i) => (
+                        <div key={label} className="stat-block" style={{ borderRight: i < 2 ? '1px solid var(--border)' : 'none' }}>
+                            <p style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 5 }}>{label}</p>
+                            <p style={{ fontSize: 14, fontWeight: 700, color: i === 2 ? 'var(--sage)' : 'var(--text-primary)' }}>{val}</p>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Tabs */}
+                <div style={{ display: 'flex', gap: 6, marginBottom: 18, background: 'var(--surface-dim)', borderRadius: 100, padding: 4 }}>
+                    {['actions', 'contacts', 'docs'].map(tab => (
+                        <button key={tab} onClick={() => setDetailTab(tab)}
+                            style={{
+                                flex: 1, padding: '8px 4px', borderRadius: 100, border: 'none',
+                                fontSize: 13, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s',
+                                background: detailTab === tab ? '#fff' : 'transparent',
+                                color: detailTab === tab ? 'var(--text-primary)' : 'var(--text-tertiary)',
+                                boxShadow: detailTab === tab ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                                fontFamily: 'DM Sans, sans-serif',
+                            }}>
+                            {tab === 'actions' ? 'Tracking' : tab.charAt(0).toUpperCase() + tab.slice(1)}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Tracking Tab */}
+                {detailTab === 'actions' && (
+                    <div className="screen-fade">
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 20 }}>
+                            <button onClick={handleStartWizard} style={{
+                                background: 'var(--ink)', borderRadius: 18, padding: '18px 10px',
+                                border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column',
+                                alignItems: 'center', gap: 8, transition: 'all 0.15s',
+                            }}>
+                                <I n="location-dot" size={22} cls="" style={{ color: 'var(--amber)' }} />
+                                <span style={{ fontSize: 11, fontWeight: 700, color: '#fff', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Check In</span>
+                            </button>
+                            <button onClick={() => setModalType('note')} style={{
+                                background: '#fff', borderRadius: 18, padding: '18px 10px',
+                                border: '1px solid var(--border)', cursor: 'pointer', display: 'flex', flexDirection: 'column',
+                                alignItems: 'center', gap: 8, transition: 'all 0.15s',
+                            }}>
+                                <I n="pen-to-square" size={22} style={{ color: 'var(--text-secondary)' }} />
+                                <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Log Note</span>
+                            </button>
+                        </div>
+
+                        <p className="section-lbl">Activity Timeline</p>
+                        <div style={{ paddingBottom: 80 }}>
+                            {placeLogs.length === 0
+                                ? <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: '32px 0', fontSize: 14 }}>No activity recorded.</p>
+                                : placeLogs.map(log => (
+                                    <div key={log.id} className="log-entry">
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                                            <span className="tag" style={{
+                                                background: log.type === 'NOTE' ? 'var(--amber-soft)' : 'var(--sky-soft)',
+                                                color: log.type === 'NOTE' ? 'var(--amber-deep)' : 'var(--sky)'
+                                            }}>{log.type}</span>
+                                            <span style={{ fontSize: 11, color: 'var(--text-tertiary)', fontWeight: 600, fontFamily: 'DM Mono' }}>{log.date} · {log.time}</span>
+                                        </div>
+                                        <p style={{ fontSize: 14, color: 'var(--text-primary)', lineHeight: 1.6, fontWeight: 500 }}>{log.note}</p>
+                                        {log.formData?.length > 0 && (
+                                            <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
+                                                <p style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>Visit Summary</p>
+                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 8px' }}>
+                                                    {log.formData.map((f, i) => (
+                                                        <div key={i}>
+                                                            <p style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{f.label}</p>
+                                                            <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginTop: 3 }}>{f.answer || '—'}</p>
+                                                            {f.photo && <img src={f.photo} style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 8, marginTop: 4, border: '1px solid var(--border)' }} />}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    </div>
+                )}
+
+                {/* Contacts Tab */}
+                {detailTab === 'contacts' && (
+                    <div className="screen-fade" style={{ paddingBottom: 80 }}>
+                        <button onClick={() => setModalType('contact')} style={{ width: '100%', padding: '13px', borderRadius: 100, background: '#fff', border: '1px solid var(--border-med)', fontSize: 13, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 16, color: 'var(--text-primary)', fontFamily: 'DM Sans, sans-serif' }}>
+                            <I n="user-plus" size={14} />Add new contact
+                        </button>
+                        {placeContacts.length === 0
+                            ? <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: '32px 0', fontSize: 14 }}>No contacts on file.</p>
+                            : placeContacts.map(c => (
+                                <div key={c.id} className="contact-entry" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                    <div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                                            <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'var(--ink)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
+                                                {c.name.split(' ').map(w => w[0]).join('').slice(0, 2)}
+                                            </div>
+                                            <div>
+                                                <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>{c.name}</p>
+                                                <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--amber-deep)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{c.role}</p>
+                                            </div>
+                                        </div>
+                                        <div style={{ marginLeft: 48 }}>
+                                            <p style={{ fontSize: 12, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                                                <I n="phone" size={11} />{c.phone}
+                                            </p>
+                                            {c.email && <p style={{ fontSize: 12, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                                                <I n="envelope" size={11} />{c.email}
+                                            </p>}
+                                        </div>
+                                    </div>
+                                    <button className="call-btn" onClick={() => showToast('Calling…')}><I n="phone" size={14} /></button>
+                                </div>
+                            ))
+                        }
+                    </div>
+                )}
+
+                {/* Docs Tab */}
+                {detailTab === 'docs' && (
+                    <div className="screen-fade" style={{ paddingBottom: 80 }}>
+                        <button onClick={() => { showToast('Uploading…'); setTimeout(() => showToast('Upload complete'), 1000); }}
+                            style={{ width: '100%', padding: '13px', borderRadius: 100, background: '#fff', border: '1px solid var(--border-med)', fontSize: 13, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 16, color: 'var(--text-primary)', fontFamily: 'DM Sans, sans-serif' }}>
+                            <I n="cloud-arrow-up" size={14} />Upload document
+                        </button>
+                        {placeDocs.length === 0
+                            ? <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: '32px 0', fontSize: 14 }}>No documents.</p>
+                            : placeDocs.map(d => (
+                                <div key={d.id} className="doc-entry">
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                        <div style={{ width: 44, height: 44, borderRadius: 12, background: d.type === 'pdf' ? 'var(--rose-soft)' : 'var(--sky-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <I n="file-pdf" size={18} style={{ color: d.type === 'pdf' ? 'var(--rose)' : 'var(--sky)' }} />
+                                        </div>
+                                        <div>
+                                            <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{d.name}</p>
+                                            <p style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2 }}>{d.date} · {d.size}</p>
+                                        </div>
+                                    </div>
+                                    <button style={{ width: 34, height: 34, borderRadius: '50%', background: 'var(--surface-dim)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+                                        <I n="download" size={13} />
+                                    </button>
+                                </div>
+                            ))
+                        }
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+
+    /* ═══════════════════════════════════════ WIZARD ═══════════════════════════════════════ */
+    const wTitles = isColdVisit 
+        ? ['Check in', 'Add a contact', 'Store profile', 'Site survey', 'Discovery & pitch', 'Visit outcome', 'Summary']
+        : isFollowUpVisit
+        ? ['Check in', 'Contact selection', 'Discussion outcome', 'Objections & next steps', 'Notes', 'Summary']
+        : isDemoVisit
+        ? ['Check in', 'Contact selection', 'Demo presentation', 'Reactions & feedback', 'Notes & next steps', 'Summary']
+        : ['Check in', 'Contact selection', 'Closing checklist', 'Details & dates', 'Notes & next steps', 'Summary'];
+
+    const wSubs = isColdVisit
+        ? [
+            'GPS detected a nearby store. Confirm visit details.',
+            'Did you speak with anyone? Add details or skip.',
+            `Quick details about ${activePlace?.name} for the survey.`,
+            'Complete as much as you can during the visit.',
+            'Track their response to the pitch and identify objections.',
+            `How did the ${wData.visitType?.toLowerCase()} wrap up?`,
+            ''
+        ] : isFollowUpVisit
+        ? [
+            'GPS detected a nearby store. Confirm visit details.',
+            'Did you speak with anyone? Select or add contact.',
+            'Review past notes and log today\'s response.',
+            'Identify any roadblocks and plan the next move.',
+            'Drop any key conversation details.',
+            ''
+        ] : isDemoVisit
+        ? [
+            'GPS detected a nearby store. Confirm visit details.',
+            'Did you speak with anyone? Select or add contact.',
+            'Log the features shown and who was present.',
+            'Capture their reaction and any concerns raised.',
+            'Plan the next step to push the deal forward.',
+            ''
+        ] : [
+            'GPS detected a nearby store. Confirm visit details.',
+            'Did you speak with anyone? Select or add contact.',
+            'Verify all requirements for moving forward.',
+            'Log pricing, pending documents, and go-live plans.',
+            'Record the final outcome and specific reasons.',
+            ''
+        ];
+
+    const nextText = isColdVisit
+        ? ['Next: Add contact', 'Next: Store profile', 'Next: Site survey', 'Next: Discovery', 'Next: Outcome', 'Complete visit', 'Return to details'][wizardStep]
+        : isFollowUpVisit
+        ? ['Next: Contact', 'Next: Discussion', 'Next: Objections', 'Next: Notes', 'Complete visit', 'Return to details'][wizardStep]
+        : isDemoVisit
+        ? ['Next: Contact', 'Next: Presentation', 'Next: Reactions', 'Next: Notes', 'Complete visit', 'Return to details'][wizardStep]
+        : ['Next: Contact', 'Next: Checklist', 'Next: Details', 'Next: Notes', 'Complete visit', 'Return to details'][wizardStep];
+
+    const var_radius = 'var(--radius-sm)';
+
+    const renderWizard = () => (
+        <div className="flex flex-col h-full screen-fade">
+            {/* Wizard Header */}
+            <div className="app-shell" style={{ padding: '44px 16px 16px', flexShrink: 0 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--amber)', color: 'var(--ink)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800 }}>JM</div>
+                        <div>
+                            <p style={{ fontSize: 13, fontWeight: 700, color: '#fff', lineHeight: 1.2 }}>Jake Morrison</p>
+                            <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)' }}>Sales Rep</p>
+                        </div>
+                    </div>
+                    <div className="timer-display">
+                        <I n="clock" size={11} style={{ color: 'var(--amber)' }} />
+                        <span style={{ fontSize: 13, fontWeight: 700, color: '#fff', fontFamily: 'DM Mono' }}>{fmtTime(visitTime)}</span>
+                    </div>
+                </div>
+                <div style={{ display: 'flex', gap: 4 }}>
+                    {[...Array(maxSteps + 1)].map((_, i) => (
+                        <div key={i} className="step-dot" style={{
+                            background: i < wizardStep ? '#fff' : i === wizardStep ? 'var(--amber)' : 'rgba(255,255,255,0.2)'
+                        }} />
+                    ))}
+                </div>
+            </div>
+
+            {/* Content */}
+            <div style={{ flex: 1, background: 'var(--surface)', borderRadius: '24px 24px 0 0', overflowY: 'auto', padding: '22px 16px 120px' }} className="hide-scroll">
+                <h2 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.4px', marginBottom: 4 }}>{wTitles[wizardStep]}</h2>
+                {wSubs[wizardStep] && <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 20, lineHeight: 1.5 }}>{wSubs[wizardStep]}</p>}
+
+                {/* STEP 0: Visit Type (Common) */}
+                {wizardStep === 0 && (
+                    <div className="screen-fade" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Detected location</p>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                <img src={activePlace.img} alt={activePlace.name} style={{ width: 52, height: 52, borderRadius: 12, objectFit: 'cover', border: '1px solid var(--border)', flexShrink: 0 }} />
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>{activePlace.name}</p>
+                                    <p style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 2 }}>{activePlace.addr}</p>
+                                </div>
+                                <span className="tag gps-badge">GPS</span>
+                            </div>
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Type of visit</p>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                                {[['Cold visit','First contact'],['Follow-up','Prior contact'],['Demo','Live product demo'],['Closing','Finalizing deal']].map(([label, desc]) => (
+                                    <div key={label} className="visit-card" onClick={() => setWData({ ...wData, visitType: label, contactMode: label === 'Cold visit' ? 'new' : wData.contactMode })}
+                                        style={{ borderColor: wData.visitType === label ? 'var(--amber)' : 'var(--border)', background: wData.visitType === label ? 'var(--amber-soft)' : '#fff' }}>
+                                        <p style={{ fontSize: 14, fontWeight: 700, color: wData.visitType === label ? 'var(--amber-deep)' : 'var(--text-primary)', lineHeight: 1.2, marginBottom: 3 }}>{label}</p>
+                                        <p style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{desc}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* STEP 1: Contact Selection (Common structure, different copy) */}
+                {wizardStep === 1 && (
+                    <div className="screen-fade" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div className="info-alert">
+                            <I n="circle-info" size={16} style={{ color: 'var(--amber)', marginTop: 1, flexShrink: 0 }} />
+                            <p style={{ fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.5 }}>
+                                {isColdVisit ? 'Add contact details. If you reached someone, add them to unlock the contact checklist.' : (placeContacts.length === 0 ? 'No contact on file. ' : 'Select an existing contact or add a new one. ')}
+                            </p>
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">{isColdVisit ? 'Contact details' : 'Contact selection'}</p>
+
+                            {!isColdVisit && placeContacts.map(c => (
+                                <label key={c.id} className="radio-opt" style={{ borderColor: wData.selectedContactId === c.id && wData.contactMode === 'existing' ? 'var(--amber)' : 'var(--border)', background: wData.selectedContactId === c.id && wData.contactMode === 'existing' ? 'var(--amber-soft)' : '#fff' }}>
+                                    <input type="radio" name="csel" style={{ accentColor: 'var(--ink)' }}
+                                        checked={wData.selectedContactId === c.id && wData.contactMode === 'existing'}
+                                        onChange={() => setWData({ ...wData, contactMode: 'existing', selectedContactId: c.id })} />
+                                    <div>
+                                        <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{c.name} <span style={{ fontWeight: 400, color: 'var(--text-tertiary)' }}>({c.role})</span></p>
+                                    </div>
+                                </label>
+                            ))}
+
+                            {!isColdVisit ? (
+                                <label className="radio-opt" style={{ flexDirection: 'column', alignItems: 'flex-start', borderColor: wData.contactMode === 'new' ? 'var(--amber)' : 'var(--border)', background: wData.contactMode === 'new' ? 'var(--amber-soft)' : '#fff' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                        <input type="radio" name="csel" style={{ accentColor: 'var(--ink)' }}
+                                            checked={wData.contactMode === 'new'}
+                                            onChange={() => setWData({ ...wData, contactMode: 'new' })} />
+                                        <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Add new contact</p>
+                                    </div>
+                                    {wData.contactMode === 'new' && (
+                                        <div style={{ paddingLeft: 26, marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
+                                            <input className="fp-input" placeholder="Full name" value={wData.newContact.name} onChange={e => setWData({ ...wData, newContact: { ...wData.newContact, name: e.target.value } })} />
+                                            <select className="fp-input" value={wData.newContact.role} onChange={e => setWData({ ...wData, newContact: { ...wData.newContact, role: e.target.value } })}>
+                                                <option value="">Select role</option>
+                                                <option>Owner</option><option>Manager</option><option>Assistant Manager</option><option>Other</option>
+                                            </select>
+                                            <input className="fp-input" type="tel" placeholder="Phone (optional)" value={wData.newContact.phone} onChange={e => setWData({ ...wData, newContact: { ...wData.newContact, phone: e.target.value } })} />
+                                        </div>
+                                    )}
+                                </label>
+                            ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
+                                    <input className="fp-input" placeholder="Full name" value={wData.newContact.name} onChange={e => setWData({ ...wData, contactMode: 'new', newContact: { ...wData.newContact, name: e.target.value } })} />
+                                    <select className="fp-input" value={wData.newContact.role} onChange={e => setWData({ ...wData, contactMode: 'new', newContact: { ...wData.newContact, role: e.target.value } })}>
+                                        <option value="">Select role</option>
+                                        <option>Owner</option><option>Manager</option><option>Assistant Manager</option><option>Other</option>
+                                    </select>
+                                    <input className="fp-input" type="tel" placeholder="Phone (optional)" value={wData.newContact.phone} onChange={e => setWData({ ...wData, contactMode: 'new', newContact: { ...wData.newContact, phone: e.target.value } })} />
+                                </div>
+                            )}
+                        </div>
+
+                        <div style={{ textAlign: 'center', marginTop: 4 }}>
+                            <button onClick={() => { setWData({ ...wData, contactMode: 'skip', newContact: { name: '', role: '', phone: '' } }); setWizardStep(2); }}
+                                style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontFamily: 'DM Sans' }}>
+                                Skip — no contact made
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* ───────────────────────────────────────────────────────────────── */}
+                {/* COLD VISIT FLOW                            */}
+                {/* ───────────────────────────────────────────────────────────────── */}
+
+                {isColdVisit && wizardStep === 2 && (
+                    <div className="screen-fade" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Restaurant type</p>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                                {[['clock','QSR'],['burger','Fast casual'],['bell-concierge','Full service'],['bowl-food','Buffet'],['cloud','Cloud kitchen'],['plus','Other']].map(([icon, label]) => {
+                                    const sel = wData.storeProfile.types.includes(label);
+                                    return (
+                                        <button key={label} onClick={() => toggleArr('storeProfile', 'types', label)}
+                                            style={{ padding: '10px 12px', borderRadius: var_radius, border: `1.5px solid ${sel ? 'var(--ink)' : 'var(--border)'}`, background: sel ? 'var(--ink)' : '#fff', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: 'DM Sans', transition: 'all 0.15s' }}>
+                                            <I n={icon} size={13} style={{ color: sel ? 'var(--amber)' : 'var(--text-tertiary)' }} />
+                                            <span style={{ fontSize: 12, fontWeight: 600, color: sel ? '#fff' : 'var(--text-primary)' }}>{label}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Online delivery presence</p>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                                {['DoorDash','Uber Eats','Grubhub','Yelp','None'].map(d => (
+                                    <button key={d} className="chip" onClick={() => toggleArr('storeProfile', 'delivery', d)}
+                                        style={{ borderColor: wData.storeProfile.delivery.includes(d) ? 'var(--ink)' : 'var(--border)', background: wData.storeProfile.delivery.includes(d) ? 'var(--ink)' : '#fff', color: wData.storeProfile.delivery.includes(d) ? '#fff' : 'var(--text-secondary)' }}>
+                                        {d}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Number of stations</p>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                                <div>
+                                    <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 6 }}>Fixed terminals</p>
+                                    <input type="number" className="fp-input" placeholder="e.g. 2" style={{ textAlign: 'center', fontWeight: 700, fontSize: 16 }}
+                                        value={wData.storeProfile.fixed} onChange={e => setWData({ ...wData, storeProfile: { ...wData.storeProfile, fixed: e.target.value } })} />
+                                </div>
+                                <div>
+                                    <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 6 }}>Handhelds</p>
+                                    <input type="number" className="fp-input" placeholder="e.g. 3" style={{ textAlign: 'center', fontWeight: 700, fontSize: 16 }}
+                                        value={wData.storeProfile.handhelds} onChange={e => setWData({ ...wData, storeProfile: { ...wData.storeProfile, handhelds: e.target.value } })} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {isColdVisit && wizardStep === 3 && (
+                    <div className="screen-fade" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 12, background: hasContact ? 'var(--sage-soft)' : 'var(--amber-soft)', border: `1px solid ${hasContact ? 'rgba(74,124,89,0.2)' : 'rgba(245,166,35,0.25)'}` }}>
+                            <div style={{ width: 7, height: 7, borderRadius: '50%', background: hasContact ? 'var(--sage)' : 'var(--amber)', flexShrink: 0 }} />
+                            <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>
+                                {hasContact ? 'Contact checklist — full survey unlocked' : 'Zero contact — basic survey mode'}
+                            </p>
+                        </div>
+
+                        <div className="card screen-fade" style={{ padding: 16 }}>
+                            <p className="section-lbl">POS intelligence</p>
+                            <div style={{ borderBottom: wData.survey.posId ? 'none' : '1px solid var(--border)' }}>
+                                <div className="survey-item" style={{ borderBottom: 'none' }} onClick={() => toggleSurvey('posId')}>
+                                    <div className={`fp-check ${wData.survey.posId ? 'active' : ''}`}>
+                                        {wData.survey.posId && <I n="check" size={10} style={{ color: '#fff' }} />}
+                                    </div>
+                                    <div>
+                                        <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>POS vendor identified</p>
+                                        <p style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 2 }}>Note brand visible on terminals</p>
+                                    </div>
+                                </div>
+                                {wData.survey.posId && (
+                                    <div style={{ paddingLeft: 32, paddingBottom: 12 }}>
+                                        <input className="fp-input" placeholder="e.g. Toast, Square, Clover…"
+                                            value={wData.survey.vendorName} onChange={e => setWData({ ...wData, survey: { ...wData.survey, vendorName: e.target.value } })} />
+                                    </div>
+                                )}
+                            </div>
+                            <div style={{ borderBottom: 'none', paddingTop: wData.survey.posId ? 12 : 0, borderTop: wData.survey.posId ? '1px solid var(--border)' : 'none' }}>
+                                <div className="survey-item" style={{ borderBottom: 'none' }} onClick={() => toggleSurvey('stationsNoted')}>
+                                    <div className={`fp-check ${wData.survey.stationsNoted ? 'active' : ''}`}>
+                                        {wData.survey.stationsNoted && <I n="check" size={10} style={{ color: '#fff' }} />}
+                                    </div>
+                                    <div>
+                                        <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>Number of stations noted</p>
+                                        <p style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 2 }}>Fixed terminals + handhelds counted</p>
+                                    </div>
+                                </div>
+                                {wData.survey.stationsNoted && (
+                                    <div style={{ paddingLeft: 32, paddingBottom: 6, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                                        <div>
+                                            <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 6 }}>Swipe Fee Rate</p>
+                                            <input className="fp-input" placeholder="e.g. $0.10+2.5%"
+                                                value={wData.survey.swipeFee} onChange={e => setWData({ ...wData, survey: { ...wData.survey, swipeFee: e.target.value } })} />
+                                        </div>
+                                        <div>
+                                            <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 6 }}>Basis Points</p>
+                                            <input className="fp-input" placeholder="e.g. 35 bps"
+                                                value={wData.survey.basisPoints} onChange={e => setWData({ ...wData, survey: { ...wData.survey, basisPoints: e.target.value } })} />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="card screen-fade" style={{ padding: 16 }}>
+                            <p className="section-lbl">Menu &amp; visuals</p>
+                            {[
+                                ['menuObtained', 'Menu obtained', 'Physical copy or photo'],
+                                ['diningPhotos', 'Dining area photos', 'Indoor + outdoor'],
+                                ['kitchenPhoto', 'Kitchen photo', 'Layout if accessible'],
+                                ['cposPhoto', 'Counter / POS photo', 'Terminal make / model'],
+                            ].map(([field, title, sub], i, arr) => (
+                                <div key={field} style={{ display: 'flex', alignItems: 'center', padding: '12px 0', borderBottom: i === arr.length - 1 ? 'none' : '1px solid var(--border)', cursor: 'pointer' }} onClick={() => toggleSurvey(field)}>
+                                    <div className={`fp-check ${wData.survey[field] ? 'active' : ''}`}>
+                                        {wData.survey[field] && <I n="check" size={10} style={{ color: '#fff' }} />}
+                                    </div>
+                                    <div style={{ flex: 1, paddingLeft: 12 }}>
+                                        <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{title}</p>
+                                        <p style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 2 }}>{sub}</p>
+                                    </div>
+                                    <button onClick={e => {
+                                        e.stopPropagation();
+                                        showToast('Opening camera…');
+                                        setTimeout(() => {
+                                            setWData(p => ({
+                                                ...p,
+                                                survey: { ...p.survey, [field]: true, photos: p.survey.photos.includes(title) ? p.survey.photos : [...p.survey.photos, title] }
+                                            }));
+                                            showToast(`${title} captured`);
+                                        }, 800);
+                                    }}
+                                    style={{ width: 34, height: 34, borderRadius: '50%', background: wData.survey[field] ? 'var(--sage-soft)' : 'var(--surface-dim)', border: `1px solid ${wData.survey[field] ? 'var(--sage)' : 'var(--border)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0, color: wData.survey[field] ? 'var(--sage)' : 'var(--text-tertiary)', transition: 'all 0.15s' }}>
+                                        <I n="camera" size={13} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                        
+                        <div className="card" style={{ padding: 16 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                                <p className="section-lbl" style={{ marginBottom: 0 }}>Kitchen assessment</p>
+                                <button className={`mic-btn ${recordingField === 'posPainPoints' ? 'recording' : ''}`} onClick={() => handleVoice('posPainPoints')}>
+                                    <I n="microphone" size={13} />
+                                </button>
+                            </div>
+                            <textarea className="fp-input" rows="3" placeholder="Notes on kitchen setup, hardware struggles…"
+                                value={wData.storeProfile.posPainPoints} onChange={e => setWData({ ...wData, storeProfile: { ...wData.storeProfile, posPainPoints: e.target.value } })} />
+                        </div>
+
+                        {hasContact && (
+                            <div className="card screen-fade" style={{ padding: 16 }}>
+                                <p className="section-lbl">Contact checklist</p>
+                                {[
+                                    ['cardObtained', 'Business card obtained', 'Or owner/manager name confirmed', true],
+                                    ['painPoints', 'Current POS pain points discussed', 'Note what they complained about', false],
+                                    ['dmConfirmed', 'Decision maker confirmed', 'Are they the final buyer?', false],
+                                    ['followUpPerm', 'Follow-up permission granted', 'OK to call or visit again?', false],
+                                ].map(([field, title, sub, isCamera]) => (
+                                    <div key={field} className="survey-item" onClick={() => toggleSurvey(field)}>
+                                        <div className={`fp-check ${wData.survey[field] ? 'active' : ''}`}>
+                                            {wData.survey[field] && <I n="check" size={10} style={{ color: '#fff' }} />}
+                                        </div>
+                                        <div style={{ flex: 1 }}>
+                                            <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{title}</p>
+                                            <p style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 2 }}>{sub}</p>
+                                            {field === 'cardObtained' && wData.survey.businessCardPhoto && (
+                                                <img src={wData.survey.businessCardPhoto} style={{ width: 64, height: 40, objectFit: 'cover', borderRadius: 8, marginTop: 6, border: '1px solid var(--border)' }} />
+                                            )}
+                                        </div>
+                                        {isCamera && (
+                                            <button onClick={e => { e.stopPropagation(); showToast('Opening camera…'); setTimeout(() => { setWData(p => ({ ...p, survey: { ...p.survey, cardObtained: true, businessCardPhoto: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=200&q=80' } })); showToast('Business card captured'); }, 800); }}
+                                                style={{ width: 30, height: 30, borderRadius: '50%', background: 'var(--surface-dim)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0, color: 'var(--text-tertiary)' }}>
+                                                <I n="camera" size={13} />
+                                            </button>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {isColdVisit && wizardStep === 4 && (
+                    <div className="screen-fade" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div className="card screen-fade" style={{ padding: 16 }}>
+                            <p className="section-lbl">Pain points identified</p>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                                {[
+                                    ['stopwatch', 'Slow billing'],
+                                    ['file-invoice-dollar', 'Tax reports'],
+                                    ['box-open', 'Inventory loss'],
+                                    ['shuffle', 'Order mix-ups'],
+                                    ['credit-card', 'Payment gaps'],
+                                    ['users', 'Staff tracking']
+                                ].map(([icon, label]) => {
+                                    const sel = wData.discovery.painPoints.includes(label);
+                                    return (
+                                        <button key={label} onClick={() => toggleArr('discovery', 'painPoints', label)}
+                                            style={{ padding: '10px 12px', borderRadius: var_radius, border: `1.5px solid ${sel ? 'var(--rose)' : 'var(--border)'}`, background: sel ? 'var(--rose-soft)' : '#fff', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: 'DM Sans', transition: 'all 0.15s' }}>
+                                            <I n={icon} size={13} style={{ color: sel ? 'var(--rose)' : 'var(--text-tertiary)' }} />
+                                            <span style={{ fontSize: 12, fontWeight: 600, color: sel ? 'var(--rose)' : 'var(--text-primary)' }}>{label}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Features pitched</p>
+                            {[
+                                ['Table & KOT management', 'Kitchen order tracking'],
+                                ['Fast billing + tap pay', 'Contactless, split bills'],
+                                ['DoorDash + Uber Eats sync', 'Unified order view'],
+                                ['Inventory management', 'Stock alerts & tracking']
+                            ].map(([title, sub]) => {
+                                const sel = wData.discovery.features.includes(title);
+                                return (
+                                    <div key={title} className="survey-item" onClick={() => toggleArr('discovery', 'features', title)}>
+                                        <div className={`fp-check ${sel ? 'active' : ''}`}>
+                                            {sel && <I n="check" size={10} style={{ color: '#fff' }} />}
+                                        </div>
+                                        <div>
+                                            <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{title}</p>
+                                            <p style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 2 }}>{sub}</p>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Owner's reaction</p>
+                            <div style={{ display: 'flex', gap: 8 }}>
+                                {[
+                                    { id: 'hot', label: 'Hot lead', color: 'var(--sage)', bg: 'var(--sage-soft)' },
+                                    { id: 'warm', label: 'Warm', color: 'var(--amber-deep)', bg: 'var(--amber-soft)' },
+                                    { id: 'cold', label: 'Not interested', color: 'var(--text-secondary)', bg: 'var(--surface-dim)' }
+                                ].map(r => {
+                                    const sel = wData.discovery.reaction === r.label;
+                                    return (
+                                        <button key={r.id} onClick={() => setWData({ ...wData, discovery: { ...wData.discovery, reaction: r.label }})}
+                                            style={{ flex: 1, padding: '10px 4px', borderRadius: 12, border: `1.5px solid ${sel ? r.color : 'var(--border)'}`, background: sel ? r.bg : '#fff', fontSize: 12, fontWeight: 600, color: sel ? r.color : 'var(--text-primary)', cursor: 'pointer', transition: 'all 0.15s' }}>
+                                            {r.label}
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Objections raised</p>
+                            {[
+                                'Price seems too high',
+                                'Needs partner approval',
+                                'Worried about learning curve',
+                                'Bad past experience with tech'
+                            ].map(obj => {
+                                const sel = wData.discovery.objections.includes(obj);
+                                return (
+                                    <div key={obj} className="survey-item" onClick={() => toggleArr('discovery', 'objections', obj)}>
+                                        <div className={`fp-check ${sel ? 'active' : ''}`} style={{ borderColor: sel ? 'var(--amber)' : 'var(--border-med)', background: sel ? 'var(--amber)' : 'var(--surface-dim)' }}>
+                                            {sel && <I n="check" size={10} style={{ color: '#fff' }} />}
+                                        </div>
+                                        <div style={{ flex: 1 }}>
+                                            <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>{obj}</p>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                )}
+
+                {isColdVisit && wizardStep === 5 && (
+                    <div className="screen-fade" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Select outcome</p>
+                            {[
+                                { id: 'interest', icon: 'fire', title: 'Immediate interest', sub: 'Owner wants a demo or quote', color: 'var(--sage)', bg: 'var(--sage-soft)' },
+                                { id: 'follow', icon: 'calendar-check', title: 'Follow-up scheduled', sub: 'Date confirmed with contact', color: 'var(--sky)', bg: 'var(--sky-soft)' },
+                                { id: 'later', icon: 'arrows-rotate', title: 'Come back later', sub: 'Not the right time', color: 'var(--text-secondary)', bg: 'var(--surface-dim)' },
+                                { id: 'no', icon: 'circle-xmark', title: 'Not interested', sub: 'Pass for now', color: 'var(--rose)', bg: 'var(--rose-soft)' },
+                            ].map(o => {
+                                const sel = wData.outcome === o.title;
+                                return (
+                                    <button key={o.id} className="outcome-card" onClick={() => setWData({ ...wData, outcome: o.title })}
+                                        style={{ borderColor: sel ? o.color : 'var(--border)', background: sel ? o.bg : '#fff', marginBottom: 8 }}>
+                                        <div style={{ width: 40, height: 40, borderRadius: 12, background: o.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                            <I n={o.icon} size={19} style={{ color: o.color }} />
+                                        </div>
+                                        <div style={{ textAlign: 'left' }}>
+                                            <p style={{ fontSize: 14, fontWeight: 700, color: sel ? o.color : 'var(--text-primary)', lineHeight: 1.2, marginBottom: 3 }}>{o.title}</p>
+                                            <p style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{o.sub}</p>
+                                        </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                                <p className="section-lbl" style={{ marginBottom: 0 }}>Notes</p>
+                                <button className={`mic-btn ${recordingField === 'visitNote' ? 'recording' : ''}`} onClick={() => handleVoice('visitNote')}>
+                                    <I n="microphone" size={13} />
+                                </button>
+                            </div>
+                            <textarea className="fp-input" rows="4" placeholder="What did you observe? Any context for the next rep?"
+                                value={wData.visitNote} onChange={e => setWData({ ...wData, visitNote: e.target.value })} />
+                        </div>
+                    </div>
+                )}
+
+                {isColdVisit && wizardStep === 6 && (
+                    <div className="screen-fade" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div style={{ background: 'var(--ink)', borderRadius: 20, padding: '22px 18px', textAlign: 'center' }}>
+                            <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'var(--amber)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                                <I n="check" size={22} style={{ color: 'var(--ink)' }} />
+                            </div>
+                            <p style={{ fontSize: 16, fontWeight: 700, color: '#fff', marginBottom: 6 }}>{wData.visitType} logged — {activePlace.name}</p>
+                            <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', fontFamily: 'DM Mono' }}>Synced · {fmtTime(visitTime)} · Auto-saved</p>
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Visit summary</p>
+                            {[
+                                ['Contact', hasContact ? (wData.contactMode === 'new' ? wData.newContact.name : 'Existing contact') : 'No contact'],
+                                ['Mode', hasContact ? 'Contact checklist' : 'Zero contact', hasContact ? { background: 'var(--sage-soft)', color: 'var(--sage)' } : { background: 'var(--amber-soft)', color: 'var(--amber-deep)' }],
+                                ['POS', wData.survey.vendorName || 'Not noted'],
+                                ['Lead temp', wData.discovery.reaction || '—', 
+                                    wData.discovery.reaction === 'Hot lead' ? { background: 'var(--sage-soft)', color: 'var(--sage)' } : 
+                                    wData.discovery.reaction === 'Warm' ? { background: 'var(--amber-soft)', color: 'var(--amber-deep)' } : 
+                                    wData.discovery.reaction === 'Not interested' ? { background: 'var(--surface-dim)', color: 'var(--text-secondary)' } : null
+                                ],
+                                ['Objection', wData.discovery.objections.length > 0 ? wData.discovery.objections[0] + (wData.discovery.objections.length > 1 ? ' +' : '') : 'None', wData.discovery.objections.length > 0 ? { background: 'var(--rose-soft)', color: 'var(--rose)' } : null],
+                                ['Outcome', wData.outcome || 'None selected'],
+                            ].map(([label, val, badge]) => (
+                                <div key={label} className="summary-row">
+                                    <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{label}</span>
+                                    {badge
+                                        ? <span className="tag" style={badge}>{val}</span>
+                                        : <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{val}</span>
+                                    }
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+
+                {/* ───────────────────────────────────────────────────────────────── */}
+                {/* FOLLOW-UP VISIT FLOW                        */}
+                {/* ───────────────────────────────────────────────────────────────── */}
+
+                {isFollowUpVisit && wizardStep === 2 && (
+                    <div className="screen-fade" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div className="card" style={{ padding: 16, background: 'var(--amber-soft)', borderColor: 'rgba(245,166,35,0.25)' }}>
+                            <p className="section-lbl" style={{ color: 'var(--amber-deep)' }}>Previous deal snapshot</p>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 12 }}>
+                                {[
+                                    ['calendar', 'Last visit: Apr 12, 2026', 'var(--text-primary)'],
+                                    ['arrow-trend-down', 'Interested in lower MDR', 'var(--text-primary)'],
+                                    ['cash-register', 'Uses Square', 'var(--text-primary)'],
+                                    ['phone-volume', 'Asked for callback', 'var(--text-primary)'],
+                                    ['fire', 'Warm lead', 'var(--rose)']
+                                ].map(([icon, text, color]) => (
+                                    <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                        <I n={icon} size={13} style={{ color: color }} />
+                                        <span style={{ fontSize: 13, fontWeight: 600, color: color }}>{text}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Today's discussion outcome</p>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                                {[
+                                    'Interested', 'Busy now', 'Need owner approval', 'Comparing vendors',
+                                    'Price concern', 'Not interested', 'Asked demo', 'Asked proposal'
+                                ].map(out => {
+                                    const sel = wData.followUp.discussionOutcome === out;
+                                    return (
+                                        <button key={out} onClick={() => setWData({ ...wData, followUp: { ...wData.followUp, discussionOutcome: out } })}
+                                            style={{ padding: '8px 14px', borderRadius: 100, fontSize: 13, fontWeight: 600, transition: 'all 0.15s', cursor: 'pointer',
+                                            background: sel ? 'var(--ink)' : '#fff', color: sel ? '#fff' : 'var(--text-secondary)', border: `1.5px solid ${sel ? 'var(--ink)' : 'var(--border)'}` }}>
+                                            {out}
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {isFollowUpVisit && wizardStep === 3 && (
+                    <div className="screen-fade" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Objection capture</p>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                                {[
+                                    'High pricing', 'Existing contract', 'No urgency', 'Staff resistance',
+                                    'Feature gap', 'Trust issue', 'Support concern'
+                                ].map(obj => {
+                                    const sel = wData.followUp.objections.includes(obj);
+                                    return (
+                                        <button key={obj} onClick={() => toggleArr('followUp', 'objections', obj)}
+                                            style={{ padding: '8px 14px', borderRadius: 100, fontSize: 13, fontWeight: 600, transition: 'all 0.15s', cursor: 'pointer',
+                                            background: sel ? 'var(--rose-soft)' : '#fff', color: sel ? 'var(--rose)' : 'var(--text-secondary)', border: `1.5px solid ${sel ? 'var(--rose)' : 'var(--border)'}` }}>
+                                            {obj}
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Next action</p>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                                {[
+                                    ['paper-plane', 'Send quote'],
+                                    ['desktop', 'Demo schedule'],
+                                    ['user-tie', 'Meet owner'],
+                                    ['phone', 'Call tomorrow'],
+                                    ['calendar-plus', 'Visit next week'],
+                                    ['ban', 'Drop lead', 'var(--rose)']
+                                ].map(([icon, text, color]) => {
+                                    const sel = wData.followUp.nextAction === text;
+                                    return (
+                                        <button key={text} onClick={() => setWData({ ...wData, followUp: { ...wData.followUp, nextAction: text } })}
+                                            style={{ padding: '10px 12px', borderRadius: var_radius, border: `1.5px solid ${sel ? (color || 'var(--ink)') : 'var(--border)'}`, background: sel ? (color ? 'var(--rose-soft)' : 'var(--ink)') : '#fff', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', transition: 'all 0.15s' }}>
+                                            <I n={icon} size={13} style={{ color: sel ? (color ? 'var(--rose)' : '#fff') : 'var(--text-tertiary)' }} />
+                                            <span style={{ fontSize: 12, fontWeight: 600, color: sel ? (color ? 'var(--rose)' : '#fff') : 'var(--text-primary)' }}>{text}</span>
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {isFollowUpVisit && wizardStep === 4 && (
+                    <div className="screen-fade" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div className="card" style={{ padding: 16 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                                <p className="section-lbl" style={{ marginBottom: 0 }}>Conversation notes</p>
+                                <button className={`mic-btn ${recordingField === 'visitNote' ? 'recording' : ''}`} onClick={() => handleVoice('visitNote')}>
+                                    <I n="microphone" size={13} />
+                                </button>
+                            </div>
+                            <textarea className="fp-input" rows="4" placeholder="e.g. Owner interested if MDR reduced below current provider. Need final quote Friday."
+                                value={wData.visitNote} onChange={e => setWData({ ...wData, visitNote: e.target.value })} />
+                        </div>
+                        <button style={{ width: '100%', padding: '12px', borderRadius: 14, background: 'transparent', border: '1.5px dashed var(--border-med)', fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', cursor: 'pointer' }} onClick={() => showToast('Store info expanded')}>
+                            <I n="pen" size={12} style={{ marginRight: 6 }} /> Edit existing store & survey info
+                        </button>
+                    </div>
+                )}
+
+
+                {/* ───────────────────────────────────────────────────────────────── */}
+                {/* DEMO VISIT FLOW                            */}
+                {/* ───────────────────────────────────────────────────────────────── */}
+
+                {isDemoVisit && wizardStep === 2 && (
+                    <div className="screen-fade" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Audience</p>
+                            <select className="fp-input" value={wData.demo.audience} onChange={e => setWData({ ...wData, demo: { ...wData.demo, audience: e.target.value } })}>
+                                <option value="">Select who attended</option>
+                                <option>Owner</option>
+                                <option>Manager</option>
+                                <option>Cashier / Staff</option>
+                                <option>Multiple / Other</option>
+                            </select>
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Features shown</p>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                {[
+                                    'Billing speed', 'Inventory reports', 'Online orders integration', 'Payment settlement', 'Staff ease of use'
+                                ].map(f => {
+                                    const sel = wData.demo.featuresShown.includes(f);
+                                    return (
+                                        <div key={f} className="survey-item" onClick={() => toggleArr('demo', 'featuresShown', f)} style={{ padding: '8px 0' }}>
+                                            <div className={`fp-check ${sel ? 'active' : ''}`}>
+                                                {sel && <I n="check" size={10} style={{ color: '#fff' }} />}
+                                            </div>
+                                            <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>{f}</p>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <YesNoToggle label="Do they need a hands-on trial?" val={wData.demo.needTrial} onChange={v => setWData({...wData, demo: {...wData.demo, needTrial: v}})} />
+                        </div>
+                    </div>
+                )}
+
+                {isDemoVisit && wizardStep === 3 && (
+                    <div className="screen-fade" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Overall reaction</p>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                                {[
+                                    'Impressed', 'Interested', 'Need internal discussion', 'Need custom feature', 'Not convinced'
+                                ].map(r => {
+                                    const sel = wData.demo.reaction === r;
+                                    return (
+                                        <button key={r} onClick={() => setWData({ ...wData, demo: { ...wData.demo, reaction: r } })}
+                                            style={{ padding: '8px 14px', borderRadius: 100, fontSize: 13, fontWeight: 600, transition: 'all 0.15s', cursor: 'pointer',
+                                            background: sel ? 'var(--ink)' : '#fff', color: sel ? '#fff' : 'var(--text-secondary)', border: `1.5px solid ${sel ? 'var(--ink)' : 'var(--border)'}` }}>
+                                            {r}
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                <div>
+                                    <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 6 }}>Most liked feature</p>
+                                    <input className="fp-input" placeholder="What stood out to them?" value={wData.demo.mostLiked} onChange={e => setWData({ ...wData, demo: { ...wData.demo, mostLiked: e.target.value } })} />
+                                </div>
+                                <div>
+                                    <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 6 }}>Confusions raised</p>
+                                    <input className="fp-input" placeholder="Any UX or workflow confusion?" value={wData.demo.confusions} onChange={e => setWData({ ...wData, demo: { ...wData.demo, confusions: e.target.value } })} />
+                                </div>
+                                <div>
+                                    <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 6 }}>Technical concerns</p>
+                                    <input className="fp-input" placeholder="Hardware, internet, or sync worries?" value={wData.demo.technicalConcerns} onChange={e => setWData({ ...wData, demo: { ...wData.demo, technicalConcerns: e.target.value } })} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {isDemoVisit && wizardStep === 4 && (
+                    <div className="screen-fade" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Next action</p>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 8 }}>
+                                {[
+                                    ['file-invoice', 'Proposal', 'var(--amber)'],
+                                    ['handshake', 'Closing', 'var(--sage)'],
+                                    ['phone', 'Follow-up', 'var(--sky)']
+                                ].map(([icon, text, color]) => {
+                                    const sel = wData.demo.nextStep === text;
+                                    return (
+                                        <button key={text} onClick={() => setWData({ ...wData, demo: { ...wData.demo, nextStep: text } })}
+                                            style={{ padding: '12px 16px', borderRadius: var_radius, border: `1.5px solid ${sel ? color : 'var(--border)'}`, background: sel ? `${color}15` : '#fff', display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', transition: 'all 0.15s' }}>
+                                            <div style={{ width: 32, height: 32, borderRadius: 10, background: color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <I n={icon} size={15} style={{ color: '#fff' }} />
+                                            </div>
+                                            <span style={{ fontSize: 14, fontWeight: 700, color: sel ? color : 'var(--text-primary)' }}>{text}</span>
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                                <p className="section-lbl" style={{ marginBottom: 0 }}>Conversation notes</p>
+                                <button className={`mic-btn ${recordingField === 'visitNote' ? 'recording' : ''}`} onClick={() => handleVoice('visitNote')}>
+                                    <I n="microphone" size={13} />
+                                </button>
+                            </div>
+                            <textarea className="fp-input" rows="4" placeholder="Any final details or promises made during the demo?"
+                                value={wData.visitNote} onChange={e => setWData({ ...wData, visitNote: e.target.value })} />
+                        </div>
+                    </div>
+                )}
+
+
+                {/* ───────────────────────────────────────────────────────────────── */}
+                {/* CLOSING VISIT FLOW                          */}
+                {/* ───────────────────────────────────────────────────────────────── */}
+
+                {isClosingVisit && wizardStep === 2 && (
+                    <div className="screen-fade" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Closing checklist</p>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <YesNoToggle label="Final decision maker met?" val={wData.closing.dmMet} onChange={v => setWData({...wData, closing: {...wData.closing, dmMet: v}})} />
+                                <YesNoToggle label="Final pricing approved?" val={wData.closing.pricingApproved} onChange={v => setWData({...wData, closing: {...wData.closing, pricingApproved: v}})} />
+                                <YesNoToggle label="Documents ready?" val={wData.closing.docsReady} onChange={v => setWData({...wData, closing: {...wData.closing, docsReady: v}})} />
+                                <YesNoToggle label="Contract signed?" val={wData.closing.contractSigned} onChange={v => setWData({...wData, closing: {...wData.closing, contractSigned: v}})} />
+                                <div style={{ paddingTop: 10 }}>
+                                    <YesNoToggle label="Shall we proceed this week?" val={wData.closing.proceedThisWeek} onChange={v => setWData({...wData, closing: {...wData.closing, proceedThisWeek: v}})} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {isClosingVisit && wizardStep === 3 && (
+                    <div className="screen-fade" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Deal details</p>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                <div>
+                                    <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 6 }}>Agreed Pricing (MDR, Hardware, SAAS)</p>
+                                    <input className="fp-input" placeholder="e.g. $0.05 + 2.1%, Free terminal" value={wData.closing.agreedPricing} onChange={e => setWData({ ...wData, closing: { ...wData.closing, agreedPricing: e.target.value } })} />
+                                </div>
+                                <div>
+                                    <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 6 }}>Any final concern?</p>
+                                    <input className="fp-input" placeholder="e.g. Delivery integration speed" value={wData.closing.finalConcern} onChange={e => setWData({ ...wData, closing: { ...wData.closing, finalConcern: e.target.value } })} />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Dates & Documents</p>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                <div>
+                                    <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 6 }}>Installation / Go-live date</p>
+                                    <input type="date" className="fp-input" value={wData.closing.installationDate} onChange={e => setWData({ ...wData, closing: { ...wData.closing, installationDate: e.target.value } })} />
+                                </div>
+                                <div>
+                                    <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 6 }}>KYC/Docs pending</p>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                                        {['W9', 'Voided Check', 'Owner ID', 'Menu PDF', 'Bank statements'].map(doc => {
+                                            const isSel = wData.closing.kycPending.includes(doc);
+                                            return (
+                                                <div key={doc} onClick={() => toggleArr('closing', 'kycPending', doc)} className={`chip ${isSel ? 'selected' : ''}`} style={{ padding: '6px 12px', fontSize: 12 }}>
+                                                    {doc}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {isClosingVisit && wizardStep === 4 && (
+                    <div className="screen-fade" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Next action & outcome</p>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 8, marginBottom: 16 }}>
+                                {[
+                                    ['rocket', 'Onboarding', 'var(--sage)'],
+                                    ['hourglass-half', 'Delay reminder', 'var(--amber-deep)'],
+                                    ['ban', 'Lost follow-up', 'var(--rose)']
+                                ].map(([icon, text, color]) => {
+                                    const sel = wData.closing.nextStep === text;
+                                    return (
+                                        <button key={text} onClick={() => setWData({ ...wData, closing: { ...wData.closing, nextStep: text } })}
+                                            style={{ padding: '12px 16px', borderRadius: var_radius, border: `1.5px solid ${sel ? color : 'var(--border)'}`, background: sel ? `${color}15` : '#fff', display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', transition: 'all 0.15s' }}>
+                                            <div style={{ width: 32, height: 32, borderRadius: 10, background: color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <I n={icon} size={15} style={{ color: '#fff' }} />
+                                            </div>
+                                            <span style={{ fontSize: 14, fontWeight: 700, color: sel ? color : 'var(--text-primary)' }}>{text}</span>
+                                        </button>
+                                    )
+                                })}
+                            </div>
+
+                            {wData.closing.nextStep && (
+                                <div className="screen-fade">
+                                    <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 6 }}>Reason (Won / Lost / Delayed)</p>
+                                    <input className="fp-input" placeholder="e.g. Needs partner signature" value={wData.closing.reason} onChange={e => setWData({ ...wData, closing: { ...wData.closing, reason: e.target.value } })} />
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                                <p className="section-lbl" style={{ marginBottom: 0 }}>Conversation notes</p>
+                                <button className={`mic-btn ${recordingField === 'visitNote' ? 'recording' : ''}`} onClick={() => handleVoice('visitNote')}>
+                                    <I n="microphone" size={13} />
+                                </button>
+                            </div>
+                            <textarea className="fp-input" rows="4" placeholder="Record final details, competitor mentions, or specific handover instructions…"
+                                value={wData.visitNote} onChange={e => setWData({ ...wData, visitNote: e.target.value })} />
+                        </div>
+                    </div>
+                )}
+
+
+                {/* ───────────────────────────────────────────────────────────────── */}
+                {/* SHARED SUMMARY (Step 5)                     */}
+                {/* ───────────────────────────────────────────────────────────────── */}
+                
+                {!isColdVisit && wizardStep === 5 && (
+                    <div className="screen-fade" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div style={{ background: 'var(--ink)', borderRadius: 20, padding: '22px 18px', textAlign: 'center' }}>
+                            <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'var(--amber)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                                <I n="check" size={22} style={{ color: 'var(--ink)' }} />
+                            </div>
+                            <p style={{ fontSize: 16, fontWeight: 700, color: '#fff', marginBottom: 6 }}>{wData.visitType} logged — {activePlace.name}</p>
+                            <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', fontFamily: 'DM Mono' }}>Synced · {fmtTime(visitTime)} · Auto-saved</p>
+                        </div>
+
+                        <div className="card" style={{ padding: 16 }}>
+                            <p className="section-lbl">Visit summary</p>
+                            
+                            {/* Follow up summary array */}
+                            {isFollowUpVisit && [
+                                ['Contact', hasContact ? (wData.contactMode === 'new' ? wData.newContact.name : 'Existing contact') : 'No contact'],
+                                ['Discussion', wData.followUp.discussionOutcome || 'None'],
+                                ['Objections', wData.followUp.objections.length > 0 ? wData.followUp.objections.join(', ') : 'None', wData.followUp.objections.length > 0 ? { background: 'var(--rose-soft)', color: 'var(--rose)' } : null],
+                                ['Next Action', wData.followUp.nextAction || 'None', wData.followUp.nextAction ? { background: 'var(--sky-soft)', color: 'var(--sky)' } : null]
+                            ].map(([label, val, badge]) => (
+                                <div key={label} className="summary-row">
+                                    <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{label}</span>
+                                    {badge ? <span className="tag" style={badge}>{val}</span> : <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'right' }}>{val}</span>}
+                                </div>
+                            ))}
+
+                            {/* Demo summary array */}
+                            {isDemoVisit && [
+                                ['Contact', hasContact ? (wData.contactMode === 'new' ? wData.newContact.name : 'Existing contact') : 'No contact'],
+                                ['Features shown', wData.demo.featuresShown.length > 0 ? wData.demo.featuresShown.length + ' features' : 'None'],
+                                ['Need trial?', wData.demo.needTrial === true ? 'Yes' : wData.demo.needTrial === false ? 'No' : 'N/A', wData.demo.needTrial ? { background: 'var(--amber-soft)', color: 'var(--amber-deep)' } : null],
+                                ['Reaction', wData.demo.reaction || 'None', wData.demo.reaction === 'Impressed' || wData.demo.reaction === 'Interested' ? { background: 'var(--sage-soft)', color: 'var(--sage)' } : wData.demo.reaction === 'Not convinced' ? { background: 'var(--rose-soft)', color: 'var(--rose)' } : null],
+                                ['Next Action', wData.demo.nextStep || 'None', wData.demo.nextStep ? { background: 'var(--sky-soft)', color: 'var(--sky)' } : null]
+                            ].map(([label, val, badge]) => (
+                                <div key={label} className="summary-row">
+                                    <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{label}</span>
+                                    {badge ? <span className="tag" style={badge}>{val}</span> : <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'right' }}>{val}</span>}
+                                </div>
+                            ))}
+
+                            {/* Closing summary array */}
+                            {isClosingVisit && [
+                                ['Contact', hasContact ? (wData.contactMode === 'new' ? wData.newContact.name : 'Existing contact') : 'No contact'],
+                                ['Pricing agreed', wData.closing.pricingApproved ? 'Yes' : 'No'],
+                                ['Contract signed', wData.closing.contractSigned ? 'Yes' : 'No', wData.closing.contractSigned ? { background: 'var(--sage-soft)', color: 'var(--sage)' } : { background: 'var(--surface-dim)', color: 'var(--text-secondary)' }],
+                                ['Docs pending', wData.closing.kycPending.length > 0 ? wData.closing.kycPending.length + ' docs' : 'None', wData.closing.kycPending.length > 0 ? { background: 'var(--amber-soft)', color: 'var(--amber-deep)' } : null],
+                                ['Next Action', wData.closing.nextStep || 'None', wData.closing.nextStep === 'Onboarding' ? { background: 'var(--sage-soft)', color: 'var(--sage)' } : wData.closing.nextStep === 'Lost follow-up' ? { background: 'var(--rose-soft)', color: 'var(--rose)' } : { background: 'var(--sky-soft)', color: 'var(--sky)' }]
+                            ].map(([label, val, badge]) => (
+                                <div key={label} className="summary-row">
+                                    <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{label}</span>
+                                    {badge ? <span className="tag" style={badge}>{val}</span> : <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'right' }}>{val}</span>}
+                                </div>
+                            ))}
+                        </div>
+
+                        <button className="btn-secondary" style={{ width: '100%', borderRadius: 14, background: 'var(--sky-soft)', color: 'var(--sky)', border: '1px solid rgba(58, 110, 168, 0.3)' }} onClick={() => showToast('Generating follow-up points...')}>
+                            <I n="wand-magic-sparkles" size={14} style={{ marginRight: 4 }} /> Prep follow-up talking points
+                        </button>
+                    </div>
+                )}
+            </div>
+
+            {/* Wizard Footer */}
+            <div style={{ padding: '12px 16px 28px', background: '#fff', borderTop: '1px solid var(--border)', display: 'flex', gap: 10, flexShrink: 0 }}>
+                {wizardStep > 0 && wizardStep < maxSteps
+                    ? <button className="btn-secondary" style={{ borderRadius: 14 }} onClick={handlePrev}>Back</button>
+                    : wizardStep === 0 && <button className="btn-secondary" style={{ borderRadius: 14 }} onClick={() => { setTimerOn(false); setScreen('detail'); }}>Cancel</button>
+                }
+                <button className="btn-primary" style={{ flex: 1, borderRadius: 14, background: wizardStep === maxSteps ? 'var(--sage)' : 'var(--ink)' }} onClick={handleNext}>
+                    {nextText}
+                    {wizardStep < maxSteps && <I n="arrow-right" size={14} style={{ color: 'rgba(255,255,255,0.6)' }} />}
+                </button>
+            </div>
+        </div>
+    );
+
+    /* ═══════════════════════════════════════ MODALS ═══════════════════════════════════════ */
+    const renderModal = () => {
+        if (!modalType) return null;
+        let noteTextRef = '';
+
+        return (
+            <div className="modal-backdrop" onClick={() => setModalType(null)}>
+                <div className="modal-sheet hide-scroll" onClick={e => e.stopPropagation()}>
+                    <div className="handle-bar" />
+                    <div style={{ padding: '8px 20px 32px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                            <h3 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>
+                                {modalType === 'note' ? 'Quick note' : 'Add contact'}
+                            </h3>
+                            <button onClick={() => setModalType(null)}
+                                style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--surface-dim)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+                                <I n="xmark" size={15} />
+                            </button>
+                        </div>
+
+                        {modalType === 'note' && (
+                            <>
+                                <textarea className="fp-input" rows="4" placeholder="Brief details about this interaction…" style={{ marginBottom: 16 }}
+                                    onChange={e => { noteTextRef = e.target.value; }} />
+                                <button className="btn-primary" style={{ width: '100%', borderRadius: 14 }} onClick={() => handleAddNote(noteTextRef)}>
+                                    Save note
+                                </button>
+                            </>
+                        )}
+
+                        {modalType === 'contact' && (() => {
+                            let cn = '', cp = '', ce = '', cr = '';
+                            return (
+                                <>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
+                                        <input className="fp-input" placeholder="Contact name" onChange={e => cn = e.target.value} />
+                                        <input className="fp-input" type="tel" placeholder="Phone number" onChange={e => cp = e.target.value} />
+                                        <input className="fp-input" type="email" placeholder="Email address" onChange={e => ce = e.target.value} />
+                                        <input className="fp-input" placeholder="Role (e.g. Store Manager)" onChange={e => cr = e.target.value} />
+                                    </div>
+                                    <button className="btn-primary" style={{ width: '100%', borderRadius: 14 }} onClick={() => handleAddContact({ name: cn, phone: cp, email: ce, role: cr })}>
+                                        Save contact
+                                    </button>
+                                </>
+                            );
+                        })()}
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <div style={{ width: '100%', height: '100%', background: '#E8E5DF', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0', fontFamily: 'DM Sans, sans-serif' }}>
+            <div style={{
+                width: '100%', maxWidth: 390,
+                height: '100dvh', maxHeight: '92vh',
+                background: 'var(--surface)',
+                borderRadius: 48,
+                overflow: 'hidden',
+                display: 'flex', flexDirection: 'column',
+                position: 'relative',
+                border: '12px solid #1C1F26',
+                boxShadow: '0 32px 80px rgba(0,0,0,0.35)',
+                minHeight: 600,
+            }}>
+                {/* Dynamic island */}
+                <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 120, height: 30, background: '#1C1F26', borderRadius: '0 0 20px 20px', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 14 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#0D0F14', border: '1px solid #2A2D38' }} />
+                </div>
+
+                {/* Toast */}
+                <div className={`toast ${toast.show ? 'show' : ''}`}>{toast.msg}</div>
+
+                {/* Screens */}
+                {screen === 'directory' && renderDirectory()}
+                {screen === 'detail' && renderDetail()}
+                {screen === 'wizard' && renderWizard()}
+
+                {/* Modals */}
+                {renderModal()}
+
+                {/* Home bar */}
+                <div style={{ position: 'absolute', bottom: 6, left: '50%', transform: 'translateX(-50%)', width: '30%', height: 4, background: 'rgba(0,0,0,0.15)', borderRadius: 100, zIndex: 100, pointerEvents: 'none' }} />
+            </div>
+        </div>
+    );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>
